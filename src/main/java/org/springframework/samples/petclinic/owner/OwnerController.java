@@ -15,6 +15,17 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,10 +35,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.validation.Valid;
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * @author Juergen Hoeller
@@ -51,6 +58,43 @@ class OwnerController {
         dataBinder.setDisallowedFields("id");
     }
 
+    @GetMapping("/owners/serialization")
+    public String serializationOwners(Owner owner, Map<String, Object> model) throws IOException {
+    	owner.setLastName("");
+    	Collection<Owner> results = this.owners.findByLastName(owner.getLastName());
+    	
+    	FileOutputStream fos = new FileOutputStream("C:\\workspace\\serialization\\ownersSerialization");
+    	ObjectOutputStream oos = new ObjectOutputStream(fos);
+    	for(Owner o : results) {
+    		oos.writeObject(o);
+    	}
+    	model.put("selections", results);
+        return "owners/ownersList";
+    }
+    
+    @GetMapping("/owners/deserialization")
+    public String deserializationOwners(Owner owner, Map<String, Object> model) throws IOException, ClassNotFoundException {
+    	Collection<Owner> results = new ArrayList<Owner>();
+    	FileInputStream fis = new FileInputStream("C:\\workspace\\serialization\\ownersSerialization");
+    	ObjectInputStream ois = new ObjectInputStream(fis);
+    	for(int i=0 ; i<10; i++) {
+    		results.add((Owner) ois.readObject());
+    	}
+    	model.put("selections", results);
+        return "owners/ownersList";
+    }
+    
+    @GetMapping("/owner/json")
+    public String json(Owner owner, Map<String, Object> model) throws IOException, ClassNotFoundException {
+    	owner.setLastName("");
+    	Collection<Owner> results = this.owners.findByLastName(owner.getLastName());
+    	Owner o = results.iterator().next();
+    	
+    	System.out.println(String.format("{\"id\":\"%s\",\"lastName\":\"%s\",\"firstName\":\"%s\"}", o.getId(),o.getLastName(), o.getFirstName()));
+    	
+        return "owners/ownersList";
+    }
+    
     @GetMapping("/owners/new")
     public String initCreationForm(Map<String, Object> model) {
         Owner owner = new Owner();
