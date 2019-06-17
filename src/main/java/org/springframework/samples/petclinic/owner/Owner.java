@@ -48,7 +48,7 @@ public class Owner extends Person {
 	static final long SerialVersionUID =983978437894L;
 	
     @Column(name = "address")
-    @NotEmpty
+    @NotEmpty(message="이 값은 null을 허용하지 않습니다.")
     private String address;
 
     @Column(name = "city")

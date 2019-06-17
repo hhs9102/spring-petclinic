@@ -26,6 +26,9 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.samples.petclinic.test.event.RegistOwnerEvent;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -102,12 +105,17 @@ class OwnerController {
         return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
     }
 
+    @Autowired
+    ApplicationEventPublisher eventPublisher;
+    
     @PostMapping("/owners/new")
     public String processCreationForm(@Valid Owner owner, BindingResult result) {
         if (result.hasErrors()) {
+        	result.getAllErrors().stream().forEach(System.out::println);
             return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
         } else {
             this.owners.save(owner);
+            eventPublisher.publishEvent(new RegistOwnerEvent(owner.getFirstName()));
             return "redirect:/owners/" + owner.getId();
         }
     }
