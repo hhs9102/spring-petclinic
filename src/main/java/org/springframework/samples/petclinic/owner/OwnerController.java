@@ -65,7 +65,7 @@ class OwnerController {
     public String serializationOwners(Owner owner, Map<String, Object> model) throws IOException {
     	owner.setLastName("");
     	Collection<Owner> results = this.owners.findByLastName(owner.getLastName());
-    	
+
     	FileOutputStream fos = new FileOutputStream("C:\\workspace\\serialization\\ownersSerialization");
     	ObjectOutputStream oos = new ObjectOutputStream(fos);
     	for(Owner o : results) {

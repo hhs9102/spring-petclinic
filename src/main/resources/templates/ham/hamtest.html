@@ -1,0 +1,33 @@
+<html xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'ham')}">
+<body>
+    <dl>
+        <dt>id</dt>
+        <dd th:text="${obj.name}"></dd>
+        <dt>value</dt>
+        <dd th:text="${obj.company}"></dd>
+    </dl>
+
+    <span id="age"></span>
+    <div th:object="${obj}">
+        <p th:text="*{name}"></p>
+        <span th:text="*{company}"></span>
+
+    </div>
+
+    <input id="testBtn" type="button" value="BUTTON" onclick="javascript:ajaxTest()"/>
+    <script type="text/javascript" th:inline="javascript">
+        function ajaxTest() {
+            $('#testBtn').click(function(){
+                $.ajax({
+                    url:'./age',
+                    success:function(data){
+                        $('#age').text("");
+                        $('#age').append(data);
+                    }
+                })
+            })
+        }
+    </script>
+</body>
+</html>
