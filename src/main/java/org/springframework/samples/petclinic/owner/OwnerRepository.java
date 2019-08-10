@@ -17,6 +17,8 @@ package org.springframework.samples.petclinic.owner;
 
 import java.util.Collection;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
@@ -43,6 +45,7 @@ public interface OwnerRepository extends Repository<Owner, Integer> {
      */
     @Query("SELECT DISTINCT owner FROM Owner owner left join fetch owner.pets WHERE owner.lastName LIKE :lastName%")
     @Transactional(readOnly = true)
+    @Cacheable(value = "owners")
     Collection<Owner> findByLastName(@Param("lastName") String lastName);
 
     /**
@@ -58,6 +61,7 @@ public interface OwnerRepository extends Repository<Owner, Integer> {
      * Save an {@link Owner} to the data store, either inserting or updating it.
      * @param owner the {@link Owner} to save
      */
+    @CacheEvict(value = "owners", allEntries = true)
     void save(Owner owner);
 
 
