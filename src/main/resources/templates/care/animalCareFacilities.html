@@ -1,0 +1,22 @@
+<html xmlns:th="https://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      th:replace="~{fragments/layout :: layout (~{::body},'care')}">
+<body>
+    <table class="table table-striped">
+        <tr>
+            <th>집계년도</th>
+            <th>시군명</th>
+            <th>업체명</th>
+            <th>업체전화번호</th>
+            <th>비고사항</th>
+        </tr>
+        <tr th:each="dto : ${facility}">
+            <td th:text="${dto.SUM_YY}"></td>
+            <td th:text="${dto.SIGUN_NM}"></td>
+            <td th:text="${dto.ENTRPS_NM}"></td>
+            <td th:text="${dto.ENTRPS_TELNO}"></td>
+            <td th:text="${dto.RM_MATR}"></td>
+        </tr>
+    </table>
+</body>
+</html>

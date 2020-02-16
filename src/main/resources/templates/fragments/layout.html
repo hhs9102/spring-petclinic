@@ -59,6 +59,11 @@
                       <span>Veterinarians</span>
                   </li>
 
+                  <li th:replace="::menuItem ('/care','care','API CALL을 통한 동몰보호시설 현황','th-list','동물보호시설')">
+                      <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                      <span>동물보호시설 현황</span>
+                  </li>
+
                   <li th:replace="::menuItem ('/hamtest','hamtest','ajax Test를 위한 테스트 메뉴','search','ajax Test')">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                       <span>Ajax Test</span>
