@@ -11,11 +11,11 @@
             <th>비고사항</th>
         </tr>
         <tr th:each="dto : ${facility}">
-            <td th:text="${dto.SUM_YY}"></td>
-            <td th:text="${dto.SIGUN_NM}"></td>
-            <td th:text="${dto.ENTRPS_NM}"></td>
-            <td th:text="${dto.ENTRPS_TELNO}"></td>
-            <td th:text="${dto.RM_MATR}"></td>
+            <td th:text="${dto.sumYy}"></td>
+            <td th:text="${dto.sigunNm}"></td>
+            <td th:text="${dto.entrpsNm}"></td>
+            <td th:text="${dto.entrpsTelno}"></td>
+            <td th:text="${dto.rmMatr}"></td>
         </tr>
     </table>
 </body>

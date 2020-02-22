@@ -1,6 +1,5 @@
 package org.springframework.samples.petclinic.care.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -8,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.care.model.AnimalCareFacilityResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
 
 @Controller
@@ -37,13 +35,12 @@ public class CareController {
             .queryParam("SUM_YY", "2019")
             .queryParam("pIndex", 1)
             .queryParam("pSize", 100);
-        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString()
+        ResponseEntity<AnimalCareFacilityResponse> response = restTemplate.exchange(builder.toUriString()
             , HttpMethod.GET
             , HttpEntity.EMPTY.EMPTY
-            , new ParameterizedTypeReference<String>() {});
+            , new ParameterizedTypeReference<AnimalCareFacilityResponse>() {});
         if(response.getStatusCode() == HttpStatus.OK){
-            Map result = new ObjectMapper().readValue(response.getBody(), Map.class);
-            model.addAttribute("facility", ((List)(((Map)((List)result.get("OrganicAnimalProtectionFacilit")).get(1)).get("row"))));
+            model.addAttribute("facility", response.getBody().getHeadOrRowList().get(1).getRow());
         }
         return "care/animalCareFacilities";
     }
