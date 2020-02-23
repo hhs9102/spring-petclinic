@@ -109,7 +109,7 @@ public class AnimalCareFacilityResponse {
         }
     }
 
-    static class Row{
+    public static class Row{
         @JsonProperty("SUM_YY")
         private String sumYy;
         @JsonProperty("SIGUN_NM")
