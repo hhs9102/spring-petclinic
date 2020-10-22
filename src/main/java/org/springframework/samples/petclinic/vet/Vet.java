@@ -15,23 +15,18 @@
  */
 package org.springframework.samples.petclinic.vet;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlElement;
-
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
-import org.springframework.samples.petclinic.model.Person;
+import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.secutiry.Authority;
+
+import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotEmpty;
+import javax.xml.bind.annotation.XmlElement;
+import java.util.*;
 
 /**
  * Simple JavaBean domain object representing a veterinarian.
@@ -41,9 +36,16 @@ import org.springframework.samples.petclinic.model.Person;
  * @author Sam Brannen
  * @author Arjen Poutsma
  */
+@NoArgsConstructor
 @Entity
 @Table(name = "vets")
-public class Vet extends Person {
+@DiscriminatorValue("Vets")
+public class Vet extends User{
+
+    @Builder
+    public Vet(String username, String password, boolean accountNonExpired, boolean accountNonLocked, boolean credentialsNonExpired, boolean enabled, @NotEmpty(message = "이 값은 null을 허용하지 않습니다.") String address, @NotEmpty String city, @NotEmpty @Digits(fraction = 0, integer = 10) String telephone, @NotEmpty String firstName, @NotEmpty String lastName, List<Authority> authorities) {
+        super(username, password, accountNonExpired, accountNonLocked, credentialsNonExpired, enabled, address, city, telephone, firstName, lastName, authorities);
+    }
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"))

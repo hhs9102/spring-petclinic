@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-public class TestRestControoler {
+public class TestRestController {
 
     OwnerRepository ownerRepository;
 
-    public TestRestControoler(OwnerRepository ownerRepository) {
+    public TestRestController(OwnerRepository ownerRepository) {
         this.ownerRepository = ownerRepository;
     }
 
@@ -32,7 +32,7 @@ public class TestRestControoler {
         for(Map.Entry<String, String> entry : dog.entrySet()){
             jsonObject.put(entry.getKey(), entry.getValue());
         }
-        List<Owner> ownerList = (List<Owner>) ownerRepository.findByLastName("");
+        List<Owner> ownerList = ownerRepository.findListByLastName("");
         System.out.println(ownerList);
         return jsonObject;
     }

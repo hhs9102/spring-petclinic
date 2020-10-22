@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import javassist.NotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
@@ -49,8 +50,8 @@ class PetController {
     }
 
     @ModelAttribute("owner")
-    public Owner findOwner(@PathVariable("ownerId") int ownerId) {
-        return this.owners.findById(ownerId);
+    public Owner findOwner(@PathVariable("ownerId") int ownerId) throws NotFoundException {
+        return owners.findById(ownerId).orElseThrow(()-> new NotFoundException(String.format("[%s] 존재하지 않습니다.")));
     }
 
     @InitBinder("owner")

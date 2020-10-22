@@ -15,17 +15,7 @@
  */
 package org.springframework.samples.petclinic.owner;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-
-import javax.validation.Valid;
-
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.samples.petclinic.test.event.RegistOwnerEvent;
@@ -38,6 +28,14 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.thymeleaf.util.StringUtils;
+
+import javax.validation.Valid;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Juergen Hoeller
@@ -64,7 +62,7 @@ class OwnerController {
     @GetMapping("/owners/serialization")
     public String serializationOwners(Owner owner, Map<String, Object> model) throws IOException {
     	owner.setLastName("");
-    	Collection<Owner> results = this.owners.findByLastName(owner.getLastName());
+    	Collection<Owner> results = this.owners.findListByLastName(owner.getLastName());
 
     	FileOutputStream fos = new FileOutputStream("C:\\workspace\\serialization\\ownersSerialization");
     	ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -74,7 +72,7 @@ class OwnerController {
     	model.put("selections", results);
         return "owners/ownersList";
     }
-    
+
     @GetMapping("/owners/deserialization")
     public String deserializationOwners(Owner owner, Map<String, Object> model) throws IOException, ClassNotFoundException {
     	Collection<Owner> results = new ArrayList<Owner>();
@@ -86,18 +84,18 @@ class OwnerController {
     	model.put("selections", results);
         return "owners/ownersList";
     }
-    
+
     @GetMapping("/owner/json")
     public String json(Owner owner, Map<String, Object> model) throws IOException, ClassNotFoundException {
     	owner.setLastName("");
-    	Collection<Owner> results = this.owners.findByLastName(owner.getLastName());
+    	Collection<Owner> results = this.owners.findListByLastName(owner.getLastName());
     	Owner o = results.iterator().next();
-    	
+
     	System.out.println(String.format("{\"id\":\"%s\",\"lastName\":\"%s\",\"firstName\":\"%s\"}", o.getId(),o.getLastName(), o.getFirstName()));
-    	
+
         return "owners/ownersList";
     }
-    
+
     @GetMapping("/owners/new")
     public String initCreationForm(Map<String, Object> model) {
         Owner owner = new Owner();
@@ -107,7 +105,7 @@ class OwnerController {
 
     @Autowired
     ApplicationEventPublisher eventPublisher;
-    
+
     @PostMapping("/owners/new")
     public String processCreationForm(@Valid Owner owner, BindingResult result) {
         if (result.hasErrors()) {
@@ -129,13 +127,17 @@ class OwnerController {
     @GetMapping("/owners")
     public String processFindForm(Owner owner, BindingResult result, Map<String, Object> model) {
 
+        List<Owner> results;
+
         // allow parameterless GET request for /owners to return all records
-        if (owner.getLastName() == null) {
-            owner.setLastName(""); // empty string signifies broadest possible search
+        if (StringUtils.isEmpty(owner.getLastName())) {
+            results = owners.findAll();
+            model.put("selections", results);
+            return "owners/ownersList";
         }
 
+        results = this.owners.findListByLastName(owner.getLastName());
         // find owners by last name
-        Collection<Owner> results = this.owners.findByLastName(owner.getLastName());
         if (results.isEmpty()) {
             // no owners found
             result.rejectValue("lastName", "notFound", "not found");
@@ -152,8 +154,8 @@ class OwnerController {
     }
 
     @GetMapping("/owners/{ownerId}/edit")
-    public String initUpdateOwnerForm(@PathVariable("ownerId") int ownerId, Model model) {
-        Owner owner = this.owners.findById(ownerId);
+    public String initUpdateOwnerForm(@PathVariable("ownerId") int ownerId, Model model) throws NotFoundException {
+        Owner owner  = owners.findById(ownerId).orElseThrow(()-> new NotFoundException(String.format("[%s] 존재하지 않습니다.")));
         model.addAttribute(owner);
         return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
     }
@@ -176,9 +178,10 @@ class OwnerController {
      * @return a ModelMap with the model attributes for the view
      */
     @GetMapping("/owners/{ownerId}")
-    public ModelAndView showOwner(@PathVariable("ownerId") int ownerId) {
+    public ModelAndView showOwner(@PathVariable("ownerId") int ownerId) throws NotFoundException {
         ModelAndView mav = new ModelAndView("owners/ownerDetails");
-        mav.addObject(this.owners.findById(ownerId));
+        Owner owner = this.owners.findById(ownerId).orElseThrow(() -> new NotFoundException(String.format("[%s] 존재하지 않습니다.")));
+        mav.addObject(owner);
         return mav;
     }
 
