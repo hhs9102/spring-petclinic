@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.secutiry;
+package org.springframework.samples.petclinic.config.secutiry.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.samples.petclinic.model.User;

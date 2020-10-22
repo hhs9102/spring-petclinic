@@ -1,5 +1,6 @@
-package org.springframework.samples.petclinic.secutiry;
+package org.springframework.samples.petclinic.config.secutiry.entity;
 
+import org.springframework.samples.petclinic.config.secutiry.type.Role;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;

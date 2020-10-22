@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.secutiry;
+package org.springframework.samples.petclinic.config.secutiry.type;
 
 public enum Role {
     ADMIN("관리자"),

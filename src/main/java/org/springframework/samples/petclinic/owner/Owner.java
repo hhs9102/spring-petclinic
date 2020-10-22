@@ -18,8 +18,8 @@ package org.springframework.samples.petclinic.owner;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
+import org.springframework.samples.petclinic.config.secutiry.entity.Authority;
 import org.springframework.samples.petclinic.model.User;
-import org.springframework.samples.petclinic.secutiry.Authority;
 
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
